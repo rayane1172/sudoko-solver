@@ -48,8 +48,6 @@ class Main:
       self.entries[r][c].delete(0, tk.END)
       if value != 0:
             self.entries[r][c].insert(0, str(value))
-      else:
-            self.root.quit
       self.root.update()
 
    def solve_sudoku(self):
