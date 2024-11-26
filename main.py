@@ -39,7 +39,7 @@ class Main:
       for r in range(9):
             for c in range(9):
                value = self.entries[r][c].get()
-               if value.isdigit() and value:
+               if value.isdigit():
                   self.grid.set_value(r, c, int(value))
                else:
                   self.grid.set_value(r, c, 0)
