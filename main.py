@@ -39,7 +39,7 @@ class Main:
       for r in range(9):
             for c in range(9):
                value = self.entries[r][c].get()
-               if value.isdigit():
+               if value.isdigit() and value:
                   self.grid.set_value(r, c, int(value))
                else:
                   self.grid.set_value(r, c, 0)
@@ -48,10 +48,26 @@ class Main:
       self.entries[r][c].delete(0, tk.END)
       if value != 0:
             self.entries[r][c].insert(0, str(value))
+      else:
+            self.root.quit
       self.root.update()
 
    def solve_sudoku(self):
       self.update_grid()  # Fetch user input and update grid
+      # todo -> to test every value in initial grid
+      for row in range(9):
+         for col in range(9):
+            value = self.grid.get_value(row, col)
+            if value != 0:
+               # delete it to not reply it
+               self.grid.set_value(row, col, 0)
+               if not self.solver.is_valid(row, col, value):
+                     # restore the value and show the error
+                     self.grid.set_value(row, col, value)
+                     messagebox.showerror("Invalid Input",f"Erreur : La valeur {value} à la position ({row+1}, {col+1}) est invalide.",)
+                     return # to stop
+               self.grid.set_value(row, col, value) # restore the value
+
       if self.solver.solve():
             messagebox.showinfo("Success", "Sudoku solved!")
       else:

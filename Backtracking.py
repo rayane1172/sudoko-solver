@@ -29,11 +29,11 @@ class Backtracking:
                         self.grid.set_value(r, c, k)  # Use setter to set the value
                         if self.update_callback:
                               self.update_callback(r, c, k)  # Trigger GUI update
-                              time.sleep(0.02)  # Add a delay for visualization
+                              # time.sleep(0.02)  # Add a delay for visualization
                         if self.solve(r, c + 1):  # Recurse to the next cell
                               return True
                         self.grid.set_value(r, c, 0)  # Backtrack using the setter
                         if self.update_callback:
                               self.update_callback(r, c, 0)  # Trigger GUI update for backtracking
-                        time.sleep(0.02)
+                        # time.sleep(0.02)
             return False
