@@ -17,7 +17,7 @@ class Backtracking:
       return not_in_row and not_in_column and not_in_box
 
    def solve(self, r=0, c=0):
-      if r == 9:  # Completed the grid
+      if r == 9:
             return True
       elif c == 9:  # Move to the next row
             return self.solve(r + 1, 0)
