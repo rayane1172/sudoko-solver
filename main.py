@@ -1,44 +1,86 @@
-sudoku_grid = [
-   [5, 3, 0, 0, 7, 0, 0, 0, 0],  # 0 represents an empty cell
-   [6, 0, 0, 1, 9, 5, 0, 0, 0],
-   [0, 9, 8, 0, 0, 0, 0, 6, 0],
-   [8, 0, 0, 0, 6, 0, 0, 0, 3],
-   [4, 0, 0, 8, 0, 3, 0, 0, 1],
-   [7, 0, 0, 0, 2, 0, 0, 0, 6],
-   [0, 6, 0, 0, 0, 0, 2, 8, 0],
-   [0, 0, 0, 4, 1, 9, 0, 0, 5],
-   [0, 0, 0, 0, 8, 0, 0, 7, 9]
-]
+import tkinter as tk  # Import tkinter
+from tkinter import messagebox  # Import messagebox for alerts
+import time  # Import time for visualization delay
+
+import Backtracking
+from Grid import Grid
 
 
-def show_grid(sudoko_grid):
-   for row in sudoku_grid:
-      print(row)
+class Main:
+   def __init__(self):
+      self.root = tk.Tk()
+      self.root.title("Sudoku Solver")
 
-# check number is valid 
-def is_valid(grid, r, c, k):
-   not_in_row = k not in grid[r]
-   not_in_column = k not in [grid[i][c] for i in range(9)]
-   not_in_box = k not in [grid[i][j] for i in range(r//3*3, r//3*3+3) for j in range(c//3 * 3, c//3*3 + 3)]
-   return not_in_box and not_in_column and not_in_row
+      # Sudoku grid
+      self.sudoku_grid = [
+            [5, 3, 0, 0, 7, 0, 0, 0, 0],
+            [6, 0, 0, 1, 9, 5, 0, 0, 0],
+            [0, 9, 8, 0, 0, 0, 0, 6, 0],
+            [8, 0, 0, 0, 6, 0, 0, 0, 3],
+            [4, 0, 0, 8, 0, 3, 0, 0, 1],
+            [7, 0, 0, 0, 2, 0, 0, 0, 6],
+            [0, 6, 0, 0, 0, 0, 2, 8, 0],
+            [0, 0, 0, 4, 1, 9, 0, 0, 5],
+            [0, 0, 0, 0, 8, 0, 0, 7, 9],
+      ]
+
+      self.grid = Grid(self.sudoku_grid)
+      self.entries = []
+
+      # Pass the visualization callback to Backtracking
+      self.solver = Backtracking.Backtracking(
+            self.grid, update_callback=self.update_gui
+      )
+
+      # Create GUI
+      self.create_grid()
+      self.create_solve_button()
+
+   def create_grid(self):
+      for r in range(9):
+            row_entries = []
+            for c in range(9):
+               value = self.grid.get_value(r, c)
+               entry = tk.Entry(
+                  self.root, width=2, font=("Arial", 18), justify="center"
+               )
+               entry.grid(row=r, column=c, padx=5, pady=5)
+               if value != 0:
+                  entry.insert(0, str(value))
+                  entry.config(state="disabled")
+               row_entries.append(entry)
+            self.entries.append(row_entries)
+
+   def create_solve_button(self):
+      solve_button = tk.Button(self.root, text="Solve", command=self.solve_sudoku)
+      solve_button.grid(row=10, column=0, columnspan=9, pady=10)
+
+   def update_grid(self):
+      for r in range(9):
+            for c in range(9):
+               if self.entries[r][c].get().isdigit():
+                  self.grid.set_value(r, c, int(self.entries[r][c].get()))
+               else:
+                  self.grid.set_value(r, c, 0)
+
+   def update_gui(self, r, c, value):
+      """Callback function to update the GUI."""
+      self.entries[r][c].delete(0, tk.END)
+      if value != 0:
+            self.entries[r][c].insert(0, str(value))
+      self.root.update()  # Force GUI update
+
+   def solve_sudoku(self):
+      self.update_grid()
+      if self.solver.solve():
+            messagebox.showinfo("Success", "Sudoku solved!")
+      else:
+            messagebox.showerror("Error", "No solution exists!")
+
+   def run(self):
+      self.root.mainloop()
 
 
-def solve(grid, r=0, c=0):
-   if r==9:
-      return True
-   elif c==9:
-      return solve(grid,r+1,0)
-   elif grid[r][c] != 0:
-      return solve(grid, r, c+1)
-   else:
-      for k in range(1,10):
-         if is_valid(grid,r,c,k):
-            grid[r][c] = k
-            if solve(grid, r, c+1):
-               return True
-            grid[r][c] = 0
-      return False
-
-
-# solve(sudoku_grid,0,0)
-show_grid(solve(sudoku_grid,0,0))
+if __name__ == "__main__":
+   app = Main()
+   app.run()
