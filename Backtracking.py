@@ -3,7 +3,7 @@ import time
 
 class Backtracking:
   def __init__(self, grid, update_callback=None):
-        self.grid = grid  # Store the Grid instance
+        self.grid = grid
         self.update_callback = update_callback  # Callback for GUI updates
 
   def is_valid(self, r, c, k):
@@ -17,23 +17,26 @@ class Backtracking:
         return not_in_row and not_in_column and not_in_box
 
   def solve(self, r=0, c=0):
-      if r == 9:
+      if r == 9 :
             return True
-      elif c == 9: # next row
+      elif c == 9:
             return self.solve(r + 1, 0)
-      elif self.grid.get_value(r, c) != 0:  # skip existed value
+      elif self.grid.get_value(r, c) != 0:
             return self.solve(r, c + 1)
       else:
             for k in range(1, 10):
                   if self.is_valid(r, c, k):
                         self.grid.set_value(r, c, k)
+
                         if self.update_callback:
-                              self.update_callback(r, c, k)  # call to update gui
-                              time.sleep(0.02)
+                              self.update_callback(r, c, k)
+                              time.sleep(0.1)
+
                         if self.solve(r, c + 1):  # next cell
                               return True
-                        self.grid.set_value(r, c, 0)  # Backtrack using the setter
+                        self.grid.set_value(r, c, 0)
+
                         if self.update_callback:
-                              self.update_callback(r, c, 0)  # call to update gui
-                        time.sleep(0.02)
+                              self.update_callback(r, c, 0)
+                              time.sleep(0.1)
             return False

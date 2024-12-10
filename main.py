@@ -1,22 +1,23 @@
-import tkinter as tk  # Import tkinter
-from tkinter import messagebox  # Import messagebox for alerts
-import Backtracking
+import tkinter as tk
+from tkinter import messagebox
+from Backtracking import Backtracking
 from Grid import Grid
 import sys
 
 class Main:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Sudoku Solver")
+        self.root.title("Sudoku Solver TIAI")
 
         # todo -> create empty grid
         self.sudoku_grid = [[0 for _ in range(9)] for _ in range(9)]
 
         self.grid = Grid(self.sudoku_grid)
-        self.entries = []
+        self.entries = [] # grid in gui interface
 
-        # todo -> create Backracking instance
-        self.solver = Backtracking.Backtracking(self.grid, update_callback=self.update_gui)
+
+        self.solver = Backtracking(self.grid, update_callback=self.update_gui)
+        # todo -> update callback to notifiy the gui to update
         self.root.protocol("WM_DELETE_WINDOW", self.on_close) # close function
 
         self.create_grid()
@@ -50,7 +51,7 @@ class Main:
                 else:
                     self.grid.set_value(r, c, 0)
 
-    def update_gui(self, r, c, value):
+    def update_gui(self, r, c, value): #todo-> update gui when call-back function called
         self.entries[r][c].delete(0, tk.END)
         if value != 0:
             self.entries[r][c].insert(0, str(value))
